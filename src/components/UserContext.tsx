@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { API } from '~/constants';
+import { API, unknownErrorMessage } from '~/constants';
 import getUrl from '~/utils/getUrl';
+import { clearToken, getToken } from '~/utils/tokenHandlers';
 
 interface IUser {
   updateUser: () => void;
@@ -35,20 +36,21 @@ export const UserContextProvider = ({ children }) => {
     setErrorMessage(null);
     setIsLoading(true);
 
-    try {
-      const response = await fetch(getUrl(API.User), {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }
-      });
+    const response = await fetch(getUrl(API.User), {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      }
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
+    if (response.status !== 200 || data?.error) {
+      setErrorMessage(data?.error?.message || unknownErrorMessage);
+      clearToken();
+    } else {
       setUsername(data?.username);
       setEmail(data?.email);
       setId(data?.id);
-    } catch (error) {
-      setErrorMessage(error.message);
     }
 
     setIsLoading(false);

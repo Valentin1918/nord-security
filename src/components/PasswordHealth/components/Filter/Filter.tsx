@@ -1,31 +1,28 @@
 import { FC } from 'react';
-import { Routes } from "~/constants";
-import { IItem } from "~/services/getUserItems";
-import FilterTab from "./components/FilterTab"
+import { Routes } from '~/constants';
+import FilterTab from './components/FilterTab';
 
 import './filter-style.scss';
-import itemHasWeakPassword from "~/utils/itemHasWeakPassword";
-import itemHasReusedPassword from "~/utils/itemHasReusedPassword";
 
-interface IFilter {
-  items: Array<IItem>;
+
+export interface IFilter {
+  list: number,
+  securedList: number,
+  vulnerableList: number,
+  weakList: number,
+  reusedList: number,
+  oldList: number,
 }
 
-const Filter: FC<IFilter> = ({items}) => {
-  const weakItemsCount = items.reduce((count, item) => (
-    itemHasWeakPassword(item) ? (count + 1) : count
-  ), 0)
-
-  const reusedItemsCount = items.reduce((count, item) => (
-    itemHasReusedPassword(item, items) ? (count + 1) : count
-  ), 0)
-
-  return (
-    <div className="filter">
-      <FilterTab title="Weak" count={weakItemsCount} path={Routes.Weak}/>
-      <FilterTab title="Reused" count={reusedItemsCount} path={Routes.Reused}/>
-    </div>
-  );
-};
+const Filter: FC<IFilter> = ({list, securedList, vulnerableList, weakList, reusedList, oldList}) => (
+  <div className="filter">
+    <FilterTab title="All" count={list} path={Routes.PasswordHealth} />
+    <FilterTab title="Secured" count={securedList} path={Routes.Secured} />
+    <FilterTab title="Vulnerable" count={vulnerableList} path={Routes.Vulnerable} />
+    <FilterTab title="Weak" count={weakList} path={Routes.Weak} />
+    <FilterTab title="Reused" count={reusedList} path={Routes.Reused} />
+    <FilterTab title="Old" count={oldList} path={Routes.Old} />
+  </div>
+)
 
 export default Filter;

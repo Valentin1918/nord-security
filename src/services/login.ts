@@ -1,17 +1,32 @@
-import {API} from '~/constants';
+import { API, unknownErrorMessage } from '~/constants';
 import getUrl from '../utils/getUrl';
+import { setToken } from '~/utils/tokenHandlers';
+
+
+class ValidationError extends Error {
+  private cause: {[key: string]: boolean};
+  constructor(errObj) {
+    super(errObj?.message || unknownErrorMessage);
+    this.name = 'ValidationError';
+    this.cause = errObj?.fields;
+  }
+}
 
 const login = async (username: string, password: string) => {
-  const url = getUrl(API.Login, {
-    username,
-    password,
+
+  const response = await fetch(getUrl(API.Login), {
+    method: "POST",
+    body: JSON.stringify({username, password}),
+    headers: {'Content-Type': 'application/json'},
   });
 
-  const response = await fetch(url);
   const data = await response.json();
-  const { token } = data;
+  const { token, error } = data;
+  if (response.status !== 200 || !token || error) {
+    throw new ValidationError(error);
+  }
 
-  localStorage.setItem('token', token);
+  setToken(token);
 };
 
 export default login;

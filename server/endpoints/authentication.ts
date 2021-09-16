@@ -1,22 +1,32 @@
 import { Router } from 'express';
 import timeout from '../middleware/timeout';
 import { users } from '../data';
-import { addToken, removeToken, getTokenOwner, generateToken } from '../services/tokenManager';
+import { addToken, removeToken, generateToken, getTokenFromRequest } from '../services/tokenManager';
+import authentication from '../middleware/authentication';
+
 
 const router = Router();
 
 // if password and email is correct returns new token
-router.get('/api/login',timeout, (req, res) => {
-  const {username, password} = req.query;
+router.post('/api/login', timeout, (req, res) => {
+  const { username, password } = req.body; // TODO: + in WEB server use HTTPS connection for data encrypting
 
-  const user = users.find((user) => (
-    user.username === username &&
-    user.password === password
-  ));
+  const error = {
+    message: 'Invalid username or password !',
+    fields: {username: true, password: true}
+  }
+
+  const user = users.find((user) => {
+    if (user.username === username) {
+      error.message = `Invalid password for user: ${username} !`;
+      error.fields.username = false;
+    }
+    return user.username === username &&
+      user.password === password
+  });
 
   if (user) {
     const token = generateToken();
-
     addToken(token, user.id);
 
     res.status(200).json({
@@ -28,45 +38,14 @@ router.get('/api/login',timeout, (req, res) => {
     return;
   }
 
-  res.status(401).send();
+  res.status(401).send({ error });
 });
 
 // deletes token
-router.get('/api/logout', (req, res) => {
-  const token = req.headers.authorization?.split(' ')?.[1];
-
-  if (token) {
-    removeToken(token);
-    res.status(200).send();
-    return;
-  }
-
-  res.status(401).send();
-});
-
-// return token owner info
-router.get('/api/user', (req, res) => {
-  const token = req.headers.authorization?.split(' ')?.[1];
-
-  if (token) {
-    const tokenOwnerId = getTokenOwner(token);
-
-    if (tokenOwnerId) {
-      const tokenOwner = users.find((user) => (
-        user.id === tokenOwnerId
-      ));
-  
-      res.status(200).json({
-        id: tokenOwner.id,
-        username: tokenOwner.username,
-        email: tokenOwner.email,
-      });
-
-      return;
-    }
-  }
-
-  res.status(401).send();
+router.get('/api/logout', timeout, authentication, (req, res) => {
+  const token = getTokenFromRequest(req);
+  removeToken(token);
+  res.status(200).send();
 });
 
 export default router;

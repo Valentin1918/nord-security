@@ -1,5 +1,5 @@
-import {FC} from 'react';
-import {useHistory} from 'react-router-dom';
+import { FC } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 interface IFilterTab {
   title: string;
@@ -12,13 +12,14 @@ const FilterTab: FC<IFilterTab> = ({
   count,
   path,
 }) => {
-  const {push} = useHistory();
+  const { push } = useHistory();
+  const { pathname } = useLocation();
 
   return (
-    <div className="filter-tab" onClick={() => push(path)}>
+    <div className={`filter-tab ${path === pathname ? 'active': ''}`} onClick={() => push(path)}>
       {`${title} (${count})`}
     </div>
   );
 }
 
-export default FilterTab
+export default FilterTab;
