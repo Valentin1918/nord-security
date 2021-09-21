@@ -1,0 +1,9 @@
+@import 'src/style/__mixins.scss';
+@import 'src/style/__variables.scss';
+
+.error-block {
+  @include flex-center;
+  color: $bright-red;
+  font-weight: 400;
+  height: 32px;
+}

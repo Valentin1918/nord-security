@@ -1,10 +1,9 @@
 import cors from 'cors';
 import express from 'express';
 import bodyParser from 'body-parser';
-
 import authentication from './endpoints/authentication';
 import items from './endpoints/items';
-
+import user from './endpoints/user';
 import logger from './middleware/logger';
 
 
@@ -23,8 +22,8 @@ app.use(logger);
 // routes
 app.use(authentication);
 app.use(items);
+app.use(user);
 
 
 app.listen(9003, 'localhost');
-
 console.log('server is running on port:', 9003)

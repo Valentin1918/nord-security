@@ -1,5 +1,6 @@
 import faker from 'faker';
 
+
 interface IToken {
     token: string,
     userId: string,
@@ -24,3 +25,6 @@ export const getTokenOwner = (token: string) => (
 )
 
 export const generateToken = () => faker.random.alphaNumeric(24);
+
+export const getTokenFromRequest = (req: {headers: {authorization?: string}}) =>
+  (req?.headers?.authorization || '').split(' ')[1];

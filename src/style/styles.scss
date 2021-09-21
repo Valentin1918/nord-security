@@ -31,7 +31,12 @@ html, body, #app {
 
 .loading-screen {
   @include flex-center;
-  font-size: large;
+  background-color: rgba(255, 255, 255, 0.6);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 30px;
+  font-weight: bold;
 }
 
 .modal {

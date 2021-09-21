@@ -1,4 +1,4 @@
-@import '../../../../style/_variables';
+@import 'src/style/__variables.scss';
 
 .filter {
   display: flex;
@@ -15,6 +15,10 @@
     user-select: none;
     margin-left: 12px;
     border-radius: 9px;
+
+    &.active {
+      background-color: $blue-lightest;
+    }
 
     &:hover {
       background-color: $grey;

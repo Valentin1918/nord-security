@@ -1,4 +1,4 @@
-@import '../../../../style/_variables';
+@import 'src/style/__variables.scss';
 
 .header {
   height: 160px;
@@ -6,8 +6,12 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: $red;
-  color: white;
+  background-color: $green;
+  color: $white;
+
+    &.vulnerable {
+      background-color: $red;
+    }
 
   .user-section {
     top: 16px;

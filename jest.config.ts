@@ -10,6 +10,11 @@ const config: Config.InitialOptions = {
       isolatedModules: true,
     },
   },
+  moduleNameMapper: {
+    '~/(.*)': '<rootDir>/src/$1',
+    '\\.(s?css)$': 'identity-obj-proxy',
+  },
+  setupFilesAfterEnv: ['./jest/jestSetup.ts'],
 };
 
 export default config;
